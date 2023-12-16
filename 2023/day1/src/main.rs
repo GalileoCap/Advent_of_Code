@@ -1,4 +1,4 @@
-use std::{env, fs, iter::Iterator};
+use std::{fs, iter::Iterator};
 use lazy_static::lazy_static;
 use aho_corasick::{AhoCorasick, PatternID};
 
@@ -32,15 +32,27 @@ fn match_first_digit(line : String, part_two : bool, rev : bool) -> u32 {
 }
 
 fn main() {
-    let args : Vec<String> = env::args().collect(); 
-    let part_two = args[1].parse::<bool>().unwrap();
-    let fpath = &args[2];
+    let lines_1 = &fs::read_to_string("inout/1.example.in").unwrap();
+    let lines_2 = &fs::read_to_string("inout/2.example.in").unwrap();
+    let lines = &fs::read_to_string("inout/input").unwrap();
 
-    let res = fs::read_to_string(fpath).unwrap().lines()
-        .fold(0, |res, line|
-            res
-            + match_first_digit(line.chars().collect(), part_two, false) * 10 
-            + match_first_digit(line.chars().rev().collect(), part_two, true)
-        );
-    dbg!(res);
+    for (i, (lines, expected)) in
+        [lines_1, lines, lines_2, lines].iter()
+            .zip([142, 54390, 281, 54277])
+            .enumerate()
+        {
+        use std::time::Instant;
+        let part_two = i >= 2;
+
+        let now = Instant::now();
+        let res = lines.lines().fold(0, |res, line|
+                res
+                + match_first_digit(line.chars().collect(), part_two, false) * 10 
+                + match_first_digit(line.chars().rev().collect(), part_two, true)
+            );
+        let elapsed = now.elapsed();
+        assert_eq!(expected, res);
+        println!("{i}: {:?} {} ", elapsed, res);
+    }
+    println!();
 }
