@@ -1,16 +1,11 @@
 use std::{env, fs, iter::Iterator};
 
 fn match_first_digit_part1(line : String) -> u32 {
-    for c in line.chars() {
-        if let Some(x) = c.to_digit(10) {
-            return x;
-        }
-    }
-    panic!();
+    line.chars().find_map(|c| c.to_digit(10)).unwrap()
 }
 
 fn match_first_digit_part2(line : String) -> u32 {
-    todo!();
+    todo!()
 }
 
 fn match_first_digit(line : String, part_two : bool) -> u32 {
