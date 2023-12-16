@@ -24,7 +24,7 @@ fn main() {
 
     for (i, (file, expected)) in
         [file_1, file, file_2, file].iter()
-            .zip([0, 0, 0, 0])
+            .zip([8, 0, 0, 0])
             .enumerate()
         {
         use std::time::Instant;
