@@ -1,9 +1,7 @@
 use std::{env, fs, iter::Iterator};
 
-fn match_first_digit<'a, I>(line : I) -> u32
-    where I : Iterator<Item = char>,
-    {
-    for c in line {
+fn match_first_digit_part1(line : String) -> u32 {
+    for c in line.chars() {
         if let Some(x) = c.to_digit(10) {
             return x;
         }
@@ -11,13 +9,28 @@ fn match_first_digit<'a, I>(line : I) -> u32
     panic!();
 }
 
+fn match_first_digit_part2(line : String) -> u32 {
+    todo!();
+}
+
+fn match_first_digit(line : String, part_two : bool) -> u32 {
+    if part_two {
+        match_first_digit_part2(line)
+    } else {
+        match_first_digit_part1(line)
+    }
+}
+
 fn main() {
     let args : Vec<String> = env::args().collect(); 
-    let fpath = &args[1];
+    let part_two = args[1].parse::<bool>().unwrap();
+    let fpath = &args[2];
 
     let res = fs::read_to_string(fpath).unwrap().lines()
         .fold(0, |res, line|
-            res + match_first_digit(line.chars()) * 10 + match_first_digit(line.chars().rev())
+            res
+            + match_first_digit(line.chars().collect(), part_two) * 10 
+            + match_first_digit(line.chars().rev().collect(), part_two)
         );
     dbg!(res);
 }
