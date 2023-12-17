@@ -1,5 +1,6 @@
 use regex::Regex;
 use lazy_static::lazy_static;
+use core::cmp::max;
 
 type RES = u32;
 
@@ -40,8 +41,19 @@ fn solve_part_one(file : &String) -> RES {
     )
 }
 
+fn minimum_required(game : &String) -> (u32, u32, u32) {
+    game[game.find(":").unwrap()..].split(";").fold((0, 0, 0), |(rr, rg, rb), subset| {
+       let (sr, sg, sb) = count_subset(&subset.to_string());
+       (max(rr, sr), max(rg, sg), max(rb, sb))
+    })
+}
+
+fn power((r, g, b) : (u32, u32, u32)) -> RES {
+    r * g * b
+}
+
 fn solve_part_two(file : &String) -> RES {
-    todo!()
+    file.lines().fold(0, |res, line| res + power(minimum_required(&line.to_string())))
 }
 
 fn solve(file : &String, part_two : bool) -> RES {
@@ -60,7 +72,7 @@ fn main() {
 
     for (i, (file, expected)) in
         [file_1, file, file_2, file].iter()
-            .zip([8, 2164, 0, 0])
+            .zip([8, 2164, 2286, 69929])
             .enumerate()
         {
         use std::time::Instant;
