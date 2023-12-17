@@ -3,20 +3,24 @@ use lazy_static::lazy_static;
 
 type RES = u32;
 
-fn is_subset_possible(subset : &String) -> bool {
-    if subset.starts_with("Game") { // Hack for the first part
-        return true
-    }
-
+fn count_subset(subset : &String) -> (u32, u32, u32) {
     lazy_static!{
-        static ref RED : Regex = Regex::new(r"(\d+) red").unwrap();
-        static ref GREEN : Regex = Regex::new(r"(\d+) green").unwrap();
-        static ref BLUE : Regex = Regex::new(r"(\d+) blue").unwrap();
+        static ref RE : Regex = Regex::new(r"(?<count>\d+) (?<color>\w+)").unwrap();
     }
+    RE.captures_iter(&subset).fold((0, 0, 0), |(r, g, b), caps| {
+        let count : u32 = caps.name("count").unwrap().as_str().parse().unwrap();
+        match caps.name("color").unwrap().as_str() {
+            "red" => (r + count, g, b),
+            "green" => (r, g + count, b),
+            "blue" => (r, g, b + count),
+            _ => panic!(),
+        }
+    })
+}
 
-    RED.captures_iter(&subset).fold(0, |ret, cap| ret + cap[1].parse::<u32>().unwrap()) <= 12 &&
-    GREEN.captures_iter(&subset).fold(0, |ret, cap| ret + cap[1].parse::<u32>().unwrap()) <= 13 &&
-    BLUE.captures_iter(&subset).fold(0, |ret, cap| ret + cap[1].parse::<u32>().unwrap()) <= 14
+fn is_subset_possible(subset : &String) -> bool {
+    let (r, g, b) = count_subset(subset);
+    r <= 12 && g <= 13 && b <= 14
 }
 
 fn is_game_possible(game : &String) -> bool {
